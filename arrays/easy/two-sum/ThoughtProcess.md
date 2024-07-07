@@ -1,95 +1,76 @@
 # Thought Process
 
-Things to keep in mind: Therre only one solution.
+### Things to keep in mind: There is only one solution.
 
-Target: 9
+### Target: 9
 
-Naive solution:
+#### Naive Solution:
 
-2  11  0 7 15 
-|   |         ---> 13
+Given Array: `[2, 11, 0, 7, 15]`
 
-2  11  0 7 15 
-|      |      ---> 2
+- Compare `2` and `11` → Sum is `13`
+- Compare `2` and `0` → Sum is `2`
+- Compare `2` and `7` → Sum is `9` (Solution found: indices `0`, `3`)
 
-2  11  0 7 15 
-|        |    ---> 9, Then solution is 0, 3.
+```python
+for i in range(len(nums)):
+    for j in range(len(nums)):
+        if i != j:
+            if nums[i] + nums[j] == target:
+                return [i, j]
+```
 
+**Time Complexity:** O(n^2)  
+**Space Complexity:** O(1)
 
-for i: 0 to N
-    for j: 0 to N
-        if i different to j
-            if sum meet the target then return i, j
+#### Take 2:
 
+Next step is to see if we can do something with the properties of the array. The array is unsorted. If we sort the array the best we could do will be nlogn.
 
-Time Complexity: O(n^2), 
-Space Complexity: O(1)
+Given Array: `[2, 11, 0, 7, 15]`
 
-Take 2:
+We sort the array and search inwards: `[0, 2, 7, 11, 15]`
 
-Next step is to see if we can do something with the properties of the array. The array is unsorted. If we sort the array the best we could to will be nlogn. 
+- If the sum of the elements at the two pointers is greater than `9`, decrease the right pointer.
+- If the sum of the elements at the two pointers is less than `9`, increase the left pointer.
+- If the pointers cross, the target cannot be met.
+- If the target is found before the pointers cross, return the indices.
 
-2  11  0 7 15 
+**Time Complexity:** Sorting O(n log n) + Searching O(n) = O(n log n)
 
-We sort the array and we search inwards:
-0 2 7 11 15
-|->     <-|
+#### Take 3:
 
-if i + j element is 15 > 9: then we know we need to lower the sum, hence decrease the right index.
+Let's take a look at our example to see if we can do something better.
 
-if i + j element is 5 < 9: then we know that we need to increase the sum hence we need to increase the left index.
+Given Array: `[2, 11, 0, 7, 15]`
 
-if i > j then we know that the target can not be meet.
+For each element, calculate the complement:
+- For element `2`, the complement is `7`
+- For element `11`, the complement is `-2`
+- For element `0`, the complement is `9`
+- For element `7`, the complement is `2`
+- For element `15`, the complement is `-6`
 
-if we find the target before that then we return the indexes.
+We can build a hashmap to store complements:
 
-Time complexity:
+1. Loop 1:
+   - Array: `[2, 11, 0, 7, 15]`
+   - `7` doesn't appear in the hashmap, so add `7` as key and index of `2` as value.
+   - Hashmap: `{7: 0}`
 
-Sorting O(nlogn) + Searching O(n) = O(nlogn)
+2. Loop 2:
+   - Array: `[2, 11, 0, 7, 15]`
+   - `-2` doesn't appear in the hashmap, so add `-2` as key and index of `11` as value.
+   - Hashmap: `{7: 0, -2: 1}`
 
-Take 3:
+3. Loop 3:
+   - Array: `[2, 11, 0, 7, 15]`
+   - `9` doesn't appear in the hashmap, so add `9` as key and index of `0` as value.
+   - Hashmap: `{7: 0, -2: 1, 9: 2}`
 
-Lets take a look to our example to see if we can do something better. 
+4. Loop 4:
+   - Array: `[2, 11, 0, 7, 15]`
+   - `2` appears in the hashmap, so we can return the indices `0` and the current index.
 
-2  11  0 7 15 
-
-For element 2 to the complementary: 7
-For element 11 to the complementary: -3
-For element 0 to the complementary: 9
-For element 7 to the complementary: 2
-For element 15 to the complementary: -6
-
-so we can build a hashmap:
-
-loop1:
-2  11  0 7 15 
-|
-
-7 doesnt appear to hashmap then hash put 7 as key and index of 2 as value.
-
-hash: 
-[7] : index 0
-
-loop2:
-2  11  0 7 15 
-    |
-
-hash: [7] : index 0, [-3]: index 1
-
-loop3:
-2  11  0 7 15 
-       |
-
-hash:
-[7] : index 0
-[-3]: index 1
-[9]: index 2
-
-loop4:
-2  11  0 7 15 
-         |
-
-hash:
-[7] : index 0 <--- 7 appears to hashmap then we can return 0, curr idx
-[-3]: index 1
-[9]: index 2
+**Time Complexity:** O(n) as we traverse the array once
+**Space Complexity:** O(n) as we update a hashmap of size n.
