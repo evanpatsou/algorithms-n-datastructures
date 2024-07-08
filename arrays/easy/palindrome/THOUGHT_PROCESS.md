@@ -89,7 +89,8 @@ loop4:
 1 // 10 = 0
 reverse = 10 * 432 + 1 = 4321
 ```
-
+Time Complexity: O(N), revert the number.
+Space Complexity: O(1), no extra space is used except for a few variables.
 
 ### Optimized Approach
 
@@ -121,3 +122,6 @@ loop4:
 1 // 10 = 0
 12 == 43 --> False.
 ```
+
+Time Complexity: O(log10(N)), because we are dividing the number by 10 in each iteration.
+Space Complexity: O(1), no extra space is used except for a few variables.
